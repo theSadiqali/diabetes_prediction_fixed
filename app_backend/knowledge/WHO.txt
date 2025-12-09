@@ -1,0 +1,6 @@
+Source: World Health Organization (WHO)
+Summary:
+Diabetes is a chronic metabolic disease characterized by elevated blood glucose levels. There are major types: type 1 (insulin deficiency), type 2 (insulin resistance and relative insulin deficiency), and gestational diabetes.
+Prevention and management include healthy diets, regular physical activity, maintaining a healthy weight, avoiding tobacco use, and access to essential medicines and technologies (insulin, oral agents, blood glucose monitoring). Screening and treatment for complications (retinopathy, kidney disease, foot care) are essential.
+WHO focuses on surveillance, guidelines, and global initiatives such as the Global Diabetes Compact and coverage targets for 2030.
+Link: https://www.who.int/news-room/fact-sheets/detail/diabetes

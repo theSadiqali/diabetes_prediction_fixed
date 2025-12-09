@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en" x-data="appData()" :class="{ 'dark': darkMode }">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Diabetes Prediction & Chatbot</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .chat-bubble { max-width: 75%; padding: 0.5rem 1rem; border-radius: 1rem; margin-bottom: 0.5rem; word-wrap: break-word; }
+    .user { background-color: #3b82f6; color: white; margin-left: auto; text-align: right; }
+    .ai { background-color: #1f2937; color: #f9fafb; margin-right: auto; text-align: left; }
+    .typing { font-style: italic; color: gray; }
+    .source { font-size: 0.8rem; color: #888; margin-top: 0.25rem; }
+  </style>
+</head>
+<body class="bg-gray-900 text-gray-100 min-h-screen p-4">
+
+  <div class="container mx-auto">
+
+    <!-- Header -->
+    <div class="flex justify-between items-center mb-6">
+      <h1 class="text-3xl font-bold">Diabetes Prediction & Chatbot</h1>
+      <button @click="darkMode = !darkMode" 
+        class="px-4 py-2 rounded bg-gray-700 hover:bg-gray-600"
+        x-text="darkMode ? 'Light Mode' : 'Dark Mode'">
+      </button>
+    </div>
+
+    <!-- Diabetes Prediction Form -->
+    <div class="bg-gray-800 p-6 rounded-lg shadow mb-8">
+      <h2 class="text-2xl font-semibold mb-4">Predict Diabetes</h2>
+      <form @submit.prevent="submitPrediction" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <template x-for="field in fields" :key="field.name">
+          <div>
+            <label :for="field.name" class="block mb-1 font-medium" x-text="field.label"></label>
+            <input :id="field.name" type="number" step="any" x-model.number="field.value" 
+                   class="w-full p-2 rounded border border-gray-600 bg-gray-700 text-gray-100">
+          </div>
+        </template>
+        <div class="col-span-full text-center mt-4">
+          <button type="submit" class="px-6 py-2 bg-blue-600 rounded hover:bg-blue-700">
+            Predict
+          </button>
+        </div>
+      </form>
+      <div x-show="predictionResult !== null" class="mt-4 p-4 bg-gray-700 rounded font-semibold text-lg">
+        Probability of diabetes: <span x-text="(predictionResult*100).toFixed(2) + '%'"></span>
+      </div>
+    </div>
+
+    <!-- Chatbot Section -->
+    <div class="bg-gray-800 p-6 rounded-lg shadow flex flex-col h-[500px]">
+      <h2 class="text-2xl font-semibold mb-4">AI Chatbot</h2>
+
+      <!-- Chat Window -->
+      <div x-ref="chatWindow" class="flex-1 overflow-y-auto p-2 mb-2 border border-gray-600 rounded bg-gray-900">
+        <template x-for="msg in messages" :key="msg.id">
+          <div>
+            <div :class="['chat-bubble', msg.type==='user' ? 'user' : 'ai']" x-text="msg.text"></div>
+            <template x-if="msg.sources && msg.sources.length > 0">
+              <div class="ml-2">
+                <template x-for="s in msg.sources" :key="s.source">
+                  <div class="source" x-text="`${s.source} (score: ${s.score})`"></div>
+                </template>
+              </div>
+            </template>
+          </div>
+        </template>
+        <div x-show="loading" class="typing mt-1">AI is typing...</div>
+      </div>
+
+      <!-- Input -->
+      <div class="flex mt-2">
+        <input type="text" x-model="question" placeholder="Ask me..." 
+               @keyup.enter="askChat()" 
+               class="flex-1 p-3 rounded-lg border border-gray-600 bg-gray-700 text-gray-100 focus:ring focus:ring-green-400">
+        <button @click="askChat()" class="ml-2 px-4 py-2 bg-green-600 rounded hover:bg-green-700">
+          Send
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    function appData() {
+      return {
+        darkMode: true,
+
+        // Diabetes Prediction
+        fields: [
+          { name: 'Pregnancies', label: 'Pregnancies', value: 2 },
+          { name: 'Glucose', label: 'Glucose', value: 120 },
+          { name: 'BloodPressure', label: 'Blood Pressure', value: 70 },
+          { name: 'SkinThickness', label: 'Skin Thickness', value: 30 },
+          { name: 'Insulin', label: 'Insulin', value: 79 },
+          { name: 'BMI', label: 'BMI', value: 25 },
+          { name: 'DiabetesPedigreeFunction', label: 'Diabetes Pedigree Function', value: 0.5 },
+          { name: 'Age', label: 'Age', value: 33 },
+        ],
+        predictionResult: null,
+
+        // Chatbot
+        question: '',
+        messages: [],
+        loading: false,
+        idCounter: 0,
+
+        async submitPrediction() {
+          const data = {};
+          this.fields.forEach(f => data[f.name] = f.value);
+          try {
+            const res = await fetch('/predict/', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(data)
+            });
+            const json = await res.json();
+            if(json.error) alert(json.error);
+            else this.predictionResult = json.probability;
+          } catch(e) {
+            alert("Error predicting diabetes: " + e);
+          }
+        },
+
+        async askChat() {
+          if (!this.question.trim()) return;
+
+          // Add user message
+          this.messages.push({ id: this.idCounter++, type: 'user', text: this.question });
+          const currentQuestion = this.question;
+          this.question = '';
+          this.loading = true;
+
+          try {
+            const res = await fetch('/chat/', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ question: currentQuestion })
+            });
+            const json = await res.json();
+
+            // Add AI response
+            this.messages.push({ id: this.idCounter++, type: 'ai', text: json.answer || 'No answer found.', sources: json.sources || [] });
+          } catch(e) {
+            this.messages.push({ id: this.idCounter++, type: 'ai', text: 'Error contacting server.' });
+          } finally {
+            this.loading = false;
+            this.$nextTick(() => {
+              const chat = this.$refs.chatWindow;
+              if(chat) chat.scrollTop = chat.scrollHeight;
+            });
+          }
+        }
+      }
+    }
+  </script>
+  <!-- Medical Disclaimer -->
+<div class="mt-10">
+  <div class="max-w-3xl mx-auto bg-red-900/40 border border-red-700 text-red-300 p-4 rounded-lg shadow-lg">
+    <div class="flex items-center mb-2">
+      <svg class="w-6 h-6 text-red-400 mr-2" fill="none" stroke="currentColor" stroke-width="2" 
+           viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round"
+              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+      </svg>
+      <h3 class="text-lg font-semibold">Important Medical Disclaimer</h3>
+    </div>
+
+    <p class="text-sm leading-relaxed">
+      This project is intended <strong>strictly for educational and informational purposes</strong>. 
+      It should <strong>not</strong> be used for diagnosing diabetes or making medical decisions.
+    </p>
+
+    <p class="text-sm mt-2 leading-relaxed">
+      If you have symptoms, concerns, or any health-related questions, 
+      please <strong>consult a qualified medical doctor</strong> or healthcare professional.
+    </p>
+  </div>
+</div>
+
+
+</body>
+</html>

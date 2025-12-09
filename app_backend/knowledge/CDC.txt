@@ -1,0 +1,5 @@
+Source: Centers for Disease Control and Prevention (CDC)
+Summary:
+Type 2 diabetes accounts for about 90%–95% of diagnosed diabetes. Diabetes is a leading cause of kidney failure, lower-limb amputations, and blindness. An estimated large proportion of adults with diabetes may be undiagnosed.
+CDC emphasizes prevention (healthy lifestyle), early testing for at-risk individuals, and public health surveillance and education.
+Link: https://www.cdc.gov/diabetes

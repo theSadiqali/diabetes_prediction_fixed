@@ -1,0 +1,5 @@
+Source: NHS (United Kingdom)
+Summary:
+Diabetes causes high blood glucose. Type 1 is often diagnosed in childhood and cannot be prevented. Type 2 is strongly associated with age, ethnicity, overweight/obesity and can often be prevented or delayed with lifestyle changes. Gestational diabetes occurs during pregnancy and requires monitoring.
+NHS guidance covers diagnosis, monitoring, medications, and structured education programs.
+Link: https://www.nhs.uk/conditions/diabetes/

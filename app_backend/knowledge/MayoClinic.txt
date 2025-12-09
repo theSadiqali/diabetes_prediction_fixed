@@ -1,0 +1,4 @@
+Source: Mayo Clinic
+Summary:
+Diabetes mellitus is a group of diseases that affect how the body uses blood sugar (glucose). Causes differ by type; complications include damage to eyes, kidneys, nerves, heart and blood vessels. Symptoms and diagnosis criteria are described; treatment is tailored per type and individual risk factors.
+Link: https://www.mayoclinic.org/diseases-conditions/diabetes

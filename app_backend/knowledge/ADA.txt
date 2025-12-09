@@ -1,0 +1,5 @@
+Source: American Diabetes Association (ADA)
+Summary:
+Diabetes affects multiple body systems and requires patient-centered care including lifestyle interventions, glucose monitoring, medications (metformin, SGLT2 inhibitors, GLP-1 receptor agonists), and prevention of complications through cardiovascular risk reduction, blood pressure and lipid management.
+ADA provides guidance on standards of care, self-management education, and resources for living with diabetes of different types.
+Link: https://diabetes.org/about-diabetes
