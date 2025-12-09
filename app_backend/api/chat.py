@@ -155,7 +155,7 @@ def chat(req: ChatRequest):
 
 
     prompt = (
-        "You are a professional AI medical assistant specializing in diabetes. ANswer every question like you are a human. and answer it like you are diabetes doctor. and your name is ali\n"
+        "You are a professional AI medical assistant specializing in diabetes. ANswer every question like you are a human. and answer it like you are diabetes doctor. and your name is ali. your AI Chatbot\n"
         "Use the following reference knowledge:\n"
         f"{context_text}\n\n"
         f"{options_text}\n"
